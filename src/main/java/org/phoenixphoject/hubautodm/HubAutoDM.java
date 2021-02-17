@@ -16,19 +16,7 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        saveDefaultConfig();
-        FileConfiguration config = this.getConfig();
-        config.addDefault("messages.automessage", "&eChoose the server to start playing");
-        config.addDefault("messages.kickmessage", "&cTime is up, you didn't choose a server");
-        config.addDefault("messages.title", "&eWelcome to the Hub!");
-        config.addDefault("messages.subtitile", "&cPlease choose the server to play!");
-        config.addDefault("settings.enabletitile", true);
-        config.addDefault("settings.enableautomessage", true);
-        config.addDefault("settings.enablekick", true);
-        config.addDefault("settings.delay", 100);
-        config.addDefault("settings.needtokick", 10);
-        config.options().copyDefaults(true);
-        saveConfig();
+        saveconfig();
         getServer().getPluginManager().registerEvents(this, this);
         this.getCommand("hadmreload").setExecutor(new HadmCommand());
     }
@@ -47,12 +35,27 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
         }
     }
 
+    public void saveconfig() {
+        FileConfiguration config = this.getConfig();
+        config.addDefault("messages.automessage", "&eChoose the server to start playing");
+        config.addDefault("messages.kickmessage", "&cTime is up, you didn't choose a server");
+        config.addDefault("messages.title", "&eWelcome to the Hub!");
+        config.addDefault("messages.subtitile", "&cPlease choose the server to play!");
+        config.addDefault("settings.enabletitile", true);
+        config.addDefault("settings.enableautomessage", true);
+        config.addDefault("settings.enablekick", true);
+        config.addDefault("settings.delay", 100);
+        config.addDefault("settings.needtokick", 10);
+        config.options().copyDefaults(true);
+        saveConfig();
+    }
+
     public class HadmCommand implements CommandExecutor {
         // This method is called, when somebody uses our command
         @Override
         public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
             reloadConfig();
-            getConfig();
+            saveconfig();
             return false;
         }
     }
