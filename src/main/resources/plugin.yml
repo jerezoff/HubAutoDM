@@ -1,0 +1,12 @@
+name: HubAutoDm
+version: ${project.version}
+main: org.phoenixphoject.hubautodm.HubAutoDM
+api-version: 1.16
+authors: [ jerezoff ]
+description: Automaticly dm's Players when they joins hub
+website: nixsv.ru
+commands:
+  hadmreload:
+    description: Перезагружает конфиг
+    permission: hadm.reload
+    usage: /hadmreload
