@@ -39,10 +39,9 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
             title(event);
         }
         if(getConfig().getBoolean("settings.enableautomessage")) {
-            Boolean ekick = getConfig().getBoolean("settings.enablekick");
-            if(ekick) {
+            if(getConfig().getBoolean("settings.enablekick")) {
                 dmkick(event);
-            } else if (!ekick) {
+            } else {
                 dm(event);
             }
         }
