@@ -21,10 +21,10 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
         // Plugin startup logic
         saveDefaultConfig();
         FileConfiguration config = this.getConfig();
-        config.addDefault("automessage", "Выбери сервер для игры");
-        config.addDefault("kickmessage", "Вы не успели выбрать сервер");
-        config.addDefault("delay", 100);
-        config.addDefault("needtokick", 10);
+        config.addDefault("messages.automessage", "Choose the server to start playing");
+        config.addDefault("messages.kickmessage", "Time is up, you didn't choose a server");
+        config.addDefault("settings.delay", 100);
+        config.addDefault("settings.needtokick", 10);
         config.options().copyDefaults(true);
         saveConfig();
         getServer().getPluginManager().registerEvents(this, this);
@@ -37,16 +37,16 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
             int kick = 0;
             @Override
             public void run() {
-                if(kick < getConfig().getInt("needtokick"))
+                if(kick < getConfig().getInt("settings.needtokick"))
                 {
-                    event.getPlayer().sendMessage(getConfig().getString("automessage"));
+                    event.getPlayer().sendMessage(getConfig().getString("messages.automessage"));
                 } else {
-                    event.getPlayer().kickPlayer(getConfig().getString("kickmessage"));
+                    event.getPlayer().kickPlayer(getConfig().getString("messages.kickmessage"));
                     this.cancel();
                 }
                 kick++;
             }
-        }.runTaskTimer(this, 0, getConfig().getInt("delay"));
+        }.runTaskTimer(this, 0, getConfig().getInt("settings.delay"));
     }
 
     public class HadmCommand implements CommandExecutor {
