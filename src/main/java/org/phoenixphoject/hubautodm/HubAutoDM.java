@@ -32,31 +32,32 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
 
     public void saveconfig() {
         FileConfiguration config = this.getConfig();
-        config.addDefault("messages.automessage", "&eChoose the server to start playing");
-        config.addDefault("messages.kickmessage", "&cTime is up, you didn't choose a server");
-        config.addDefault("messages.title.title", "&eWelcome to the Hub!");
-        config.addDefault("messages.title.subtitile", "&cPlease choose the server to play!");
-        config.addDefault("settings.enabletitile", true);
-        config.addDefault("settings.enableautomessage", true);
-        config.addDefault("settings.enablekick", true);
-        config.addDefault("settings.delay", 100);
-        config.addDefault("settings.needtokick", 10);
+        config.addDefault("settings.automessage.text", "&eChoose the server to start playing");
+        config.addDefault("settings.automessage.enable", true);
+        config.addDefault("settings.automessage.delay", 100);
+        config.addDefault("settings.kick.message", "&cTime is up, you didn't choose a server");
+        config.addDefault("settings.kick.needmessages", 10);
+        config.addDefault("settings.kick.enable", true);
+        config.addDefault("settings.title.title", "&eWelcome to the Hub!");
+        config.addDefault("settings.title.subtitile", "&cPlease choose the server to play!");
+        config.addDefault("settings.title.enable", true);
         config.addDefault("settings.playsound.volume", "0.1");
         config.addDefault("settings.playsound.sound", "music.end");
         config.addDefault("settings.playsound.enable", true);
         config.addDefault("settings.daylightspeed.increaser", 1);
         config.addDefault("settings.daylightspeed.enable", true);
+        config.addDefault("settings.daylightspeed.world", "world");
         config.options().copyDefaults(true);
         saveConfig();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (getConfig().getBoolean("settings.enabletitile")) {
+        if (getConfig().getBoolean("settings.title.enable")) {
             title(event);
         }
-        if(getConfig().getBoolean("settings.enableautomessage")) {
-            if(getConfig().getBoolean("settings.enablekick")) {
+        if(getConfig().getBoolean("settings.automessage.enable")) {
+            if(getConfig().getBoolean("settings.kick.enable")) {
                 dmkick(event);
             } else {
                 dm(event);
@@ -71,7 +72,7 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 if(getConfig().getBoolean("settings.daylightspeed.enable")) {
-                    long currtime = Bukkit.getWorld("world").getTime();
+                    long currtime = Bukkit.getWorld(getConfig().getString("settings.daylightspeed.world")).getTime();
                     long increaser = getConfig().getLong("settings.daylightspeed.increaser");
                     Bukkit.getWorld("world").setTime(currtime + increaser);
                 } else {
@@ -101,13 +102,17 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.title.title")),ChatColor.translateAlternateColorCodes('&',  getConfig().getString("messages.title.subtitile")), 10, 100, 10);
+                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', getConfig().getString("settings.title.title")),ChatColor.translateAlternateColorCodes('&',  getConfig().getString("settings.title.subtitile")), 10, 100, 10);
 
             }
         }.runTaskLater(this, 20);
     }
 
     public void sound(PlayerJoinEvent event) {
+        Sound[] SOUNDS = Sound.values();
+        for (Sound sound : SOUNDS) {
+            event.getPlayer().stopSound(sound);
+        }
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -115,12 +120,6 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
                 Location loc = p.getLocation();
                 float volume = Float.parseFloat(getConfig().getString("settings.playsound.volume"));
                 float pitch = 1F;
-
-                Sound[] SOUNDS = Sound.values();
-                for (Sound sound : SOUNDS) {
-                    p.stopSound(sound);
-                }
-
                 p.playSound(loc, getConfig().getString("settings.playsound.sound"), volume, pitch);
             }
         }.runTaskLater(this, 20);
@@ -131,25 +130,25 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
             int kick = 0;
             @Override
             public void run() {
-                if(kick < getConfig().getInt("settings.needtokick"))
+                if(kick < getConfig().getInt("settings.kick.needmessages"))
                 {
-                    sendPlayer(event, getConfig().getString("messages.automessage"));
+                    sendPlayer(event, getConfig().getString("settings.automessage.text"));
                 } else {
-                    event.getPlayer().kickPlayer(ChatColor.translateAlternateColorCodes('&',  getConfig().getString("messages.kickmessage")));
+                    event.getPlayer().kickPlayer(ChatColor.translateAlternateColorCodes('&',  getConfig().getString("settings.kick.message")));
                     this.cancel();
                 }
                 kick++;
             }
-        }.runTaskTimer(this, 0, getConfig().getInt("settings.delay"));
+        }.runTaskTimer(this, 0, getConfig().getInt("settings.automessage.delay"));
     }
 
     public void dm(PlayerJoinEvent event) {
         new BukkitRunnable() {
             @Override
             public void run() {
-                sendPlayer(event, getConfig().getString("messages.automessage"));
+                sendPlayer(event, getConfig().getString("settings.automessage.text"));
             }
-        }.runTaskTimer(this, 0, getConfig().getInt("settings.delay"));
+        }.runTaskTimer(this, 0, getConfig().getInt("settings.automessage.delay"));
     }
 
     public void sendPlayer(PlayerJoinEvent event, String text) {
