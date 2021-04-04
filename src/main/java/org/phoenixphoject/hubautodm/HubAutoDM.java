@@ -92,7 +92,8 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
             if(daylight != newdaylight) {
                 timeincreaser();
             }
-            return false;
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',  "&a✔ &fHADM reloaded correctly!"));
+            return true;
         }
     }
 
