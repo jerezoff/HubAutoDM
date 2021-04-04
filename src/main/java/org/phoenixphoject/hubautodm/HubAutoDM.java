@@ -30,37 +30,6 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
         timeincreaser();
     }
 
-    public void timeincreaser() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if(getConfig().getBoolean("settings.daylightspeed.enable")) {
-                    long currtime = Bukkit.getWorld("world").getTime();
-                    long increaser = getConfig().getLong("settings.daylightspeed.increaser");
-                    Bukkit.getWorld("world").setTime(currtime + increaser);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(this, 1, 0);
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        if (getConfig().getBoolean("settings.enabletitile")) {
-            title(event);
-        }
-        if(getConfig().getBoolean("settings.enableautomessage")) {
-            if(getConfig().getBoolean("settings.enablekick")) {
-                dmkick(event);
-            } else {
-                dm(event);
-            }
-        }
-
-        if (getConfig().getBoolean("settings.playsound.enable")) { sound(event); }
-    }
-
     public void saveconfig() {
         FileConfiguration config = this.getConfig();
         config.addDefault("messages.automessage", "&eChoose the server to start playing");
@@ -79,6 +48,37 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
         config.addDefault("settings.daylightspeed.enable", true);
         config.options().copyDefaults(true);
         saveConfig();
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        if (getConfig().getBoolean("settings.enabletitile")) {
+            title(event);
+        }
+        if(getConfig().getBoolean("settings.enableautomessage")) {
+            if(getConfig().getBoolean("settings.enablekick")) {
+                dmkick(event);
+            } else {
+                dm(event);
+            }
+        }
+
+        if (getConfig().getBoolean("settings.playsound.enable")) { sound(event); }
+    }
+
+    public void timeincreaser() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(getConfig().getBoolean("settings.daylightspeed.enable")) {
+                    long currtime = Bukkit.getWorld("world").getTime();
+                    long increaser = getConfig().getLong("settings.daylightspeed.increaser");
+                    Bukkit.getWorld("world").setTime(currtime + increaser);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(this, 1, 0);
     }
 
     public class HadmCommand implements CommandExecutor {
@@ -100,7 +100,7 @@ public final class HubAutoDM extends JavaPlugin implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&',  getConfig().getString("messages.title")),ChatColor.translateAlternateColorCodes('&',  getConfig().getString("messages.subtitile")), 10, 100, 10);
+                event.getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', getConfig().getString("messages.title.title")),ChatColor.translateAlternateColorCodes('&',  getConfig().getString("messages.title.subtitile")), 10, 100, 10);
 
             }
         }.runTaskLater(this, 20);
